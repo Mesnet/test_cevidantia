@@ -10,7 +10,7 @@ if __FILE__ == $0
   data_input = JSON.parse(File.read(INPUT_PATH))
 
   # 2) Instantiate Level1, passing in the JSON data
-  level1 = Level2.new(data_input)
+  level2 = Level2.new(data_input)
 
   # 3) Run the logic and retrieve the result hash
   result_hash = JSON.parse(level2.run)

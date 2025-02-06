@@ -1,6 +1,7 @@
 require 'date'
 require_relative 'car'
 require_relative 'commission'
+require_relative 'action'
 
 class Rental
   attr_reader :id, :car, :start_date, :end_date, :distance, :with_duration_discount
@@ -37,6 +38,31 @@ class Rental
 
   def commission
     @commission ||= Commission.new(price, duration)
+  end
+
+  def commissions
+    commission.details
+  end
+
+  def actions
+    return @actions if @actions
+
+    commission_total = commissions.values.sum
+    owner_amount = price - commission_total
+
+    @actions = []
+    @actions << Action.new(who: "driver", type: "debit", amount: price)
+    @actions << Action.new(who: "owner", amount: owner_amount)
+
+    commissions.each do |key, value|
+      # Convert key to string and remove "_fee" suffix
+      # Ex : "insurance_fee" => "insurance"
+      who = key.to_s.gsub("_fee", "")
+
+      @actions << Action.new(who: who, amount: value)
+    end
+
+    @actions
   end
 
   private
