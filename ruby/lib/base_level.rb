@@ -8,6 +8,8 @@ class BaseLevel
     @rentals = data["rentals"] || []
   end
 
+  private
+
   def rental_duration(start_date, end_date)
     (Date.parse(end_date) - Date.parse(start_date)).to_i + 1
   end
@@ -15,4 +17,46 @@ class BaseLevel
   def find_car(id)
     @cars.find { |car| car["id"] == id }
   end
+
+  def compute_price_for(rental, options = {})
+    car = find_car(rental["car_id"])
+    duration = rental_duration(rental["start_date"], rental["end_date"])
+
+    distance_amount = rental["distance"] * car["price_per_km"]
+
+    time_amount = if options[:with_discount]
+			amount_with_discount(duration, car["price_per_day"])
+		else
+			duration * car["price_per_day"]
+		end
+
+    {
+      "id"    => rental["id"],
+      "price" => time_amount + distance_amount
+    }
+  end
+
+
+	def amount_with_discount(duration, price_per_day)
+		discounted_time_amount = 0
+		(1..duration).each do |day|
+      daily_full_price = price_per_day.to_f
+
+
+      daily_discounted_price = case day
+      when 1
+        daily_full_price
+      when 2..4
+        daily_full_price * 0.9
+      when 5..10
+        daily_full_price * 0.7
+      else
+        daily_full_price * 0.5
+      end
+
+      discounted_time_amount += daily_discounted_price
+    end
+
+		discounted_time_amount
+	end
 end
