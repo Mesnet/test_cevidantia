@@ -1,6 +1,6 @@
 # spec/level1_spec.rb
-require_relative '../level1/main'
-require_relative 'factories'   # load our custom factory methods
+require_relative '../../level1/main'
+require_relative '../factories'   # load our custom factory methods
 
 RSpec.describe Level1 do
   # Use our factory methods
@@ -32,6 +32,25 @@ RSpec.describe Level1 do
       # 3 days => 3*3000 + (200*15) = 9000 + 3000 = 12000
       rental_2_result = result["rentals"].find { |r| r["id"] == rental_2["id"] }
       expect(rental_2_result["price"]).to eq(12000)
+    end
+  end
+
+  context "with file-based data" do
+    let(:file_input) do
+      File.read(File.join(__dir__, 'data', 'input.json'))
+    end
+
+    let(:expected_output_file) do
+      File.read(File.join(__dir__, 'data', 'expected_output.json'))
+    end
+
+    let(:json_expected) { JSON.parse(expected_output_file) }
+
+    it "matches the expected output from file" do
+      level = described_class.new(file_input)
+      parsed_result = JSON.parse(level.run)
+
+      expect(parsed_result).to eq(json_expected)
     end
   end
 end

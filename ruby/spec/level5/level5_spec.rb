@@ -1,7 +1,7 @@
 # spec/level5_spec.rb
 require 'json'
-require_relative '../level5/main'
-require_relative 'factories'
+require_relative '../../level5/main'
+require_relative '../factories'
 
 RSpec.describe Level5 do
   let(:car_1) {build_car( id: 1, price_per_day: 2000, price_per_km: 10)}
@@ -118,6 +118,25 @@ RSpec.describe Level5 do
         drivy_action = actions.find { |a| a["who"] == "drivy" }
         expect(drivy_action["amount"]).to eq(2970)
       end
+    end
+  end
+
+  context "with file-based data" do
+    let(:file_input) do
+      File.read(File.join(__dir__, 'data', 'input.json'))
+    end
+
+    let(:expected_output_file) do
+      File.read(File.join(__dir__, 'data', 'expected_output.json'))
+    end
+
+    let(:json_expected) { JSON.parse(expected_output_file) }
+
+    it "matches the expected output from file" do
+      level = described_class.new(file_input)
+      parsed_result = JSON.parse(level.run)
+
+      expect(parsed_result).to eq(json_expected)
     end
   end
 end

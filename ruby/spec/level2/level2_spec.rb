@@ -1,7 +1,7 @@
 # spec/level2_spec.rb
 require 'json'
-require_relative '../level2/main'
-require_relative 'factories'  # Load our build_car / build_rental methods
+require_relative '../../level2/main'
+require_relative '../factories'  # Load our build_car / build_rental methods
 
 RSpec.describe Level2 do
   # Create the car(s) using the factory method
@@ -39,6 +39,25 @@ RSpec.describe Level2 do
     it "computes the correct price for rental id=3" do
       rental_3_result = result["rentals"].find { |r| r["id"] == 3 }
       expect(rental_3_result["price"]).to eq(27800)
+    end
+  end
+
+  context "with file-based data" do
+    let(:file_input) do
+      File.read(File.join(__dir__, 'data', 'input.json'))
+    end
+
+    let(:expected_output_file) do
+      File.read(File.join(__dir__, 'data', 'expected_output.json'))
+    end
+
+    let(:json_expected) { JSON.parse(expected_output_file) }
+
+    it "matches the expected output from file" do
+      level = described_class.new(file_input)
+      parsed_result = JSON.parse(level.run)
+
+      expect(parsed_result).to eq(json_expected)
     end
   end
 end
