@@ -54,7 +54,6 @@ class BaseLevel
 		(1..duration).each do |day|
       daily_full_price = price_per_day.to_f
 
-
       daily_discounted_price = case day
       when 1
         daily_full_price
@@ -136,5 +135,9 @@ class BaseLevel
     end
 
     actions
+  end
+
+  def build_rentals
+    raise "Not implemented"
   end
 end

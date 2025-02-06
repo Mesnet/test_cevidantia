@@ -4,10 +4,16 @@ require_relative '../lib/base_level'
 class Level2 < BaseLevel
 
   def run
-    { "rentals" => @rentals.map do |rental|
+    { rentals: build_rentals }.to_json
+  end
+
+  private
+
+  def build_rentals
+    @rentals.map do |rental|
       { id: rental["id"],
         price: compute_price_for(rental, { with_discount: true })
       }
-    end }.to_json
+    end
   end
 end
