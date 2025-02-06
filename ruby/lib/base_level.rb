@@ -30,10 +30,7 @@ class BaseLevel
 			duration * car["price_per_day"]
 		end
 
-    {
-      "id"    => rental["id"],
-      "price" => time_amount + distance_amount
-    }
+    (time_amount + distance_amount).to_i
   end
 
 
