@@ -12,20 +12,4 @@ class Level3 < BaseLevel
       }
     end }.to_json
   end
-
-  private
-
-  def compute_commissions(price, duration)
-    commission_total = (price * 0.3).to_i  # 30% of the price
-
-    insurance_fee   = (commission_total / 2).to_i
-    assistance_fee  = duration * 100 # 1€/day
-    drivy_fee       = commission_total - insurance_fee - assistance_fee
-
-    {
-      insurance_fee: insurance_fee,
-      assistance_fee: assistance_fee,
-      drivy_fee: drivy_fee
-    }
-  end
 end
