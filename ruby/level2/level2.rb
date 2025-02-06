@@ -3,7 +3,7 @@ require_relative '../models/car'
 require_relative '../models/rental'
 
 
-class Level1
+class Level2
 	attr_reader :data
 
   def initialize(input_data = nil)
@@ -15,7 +15,7 @@ class Level1
     results = rentals.map do |rental|
       {
         id: rental.id,
-        price: rental.price
+        price: rental.price_with_discount
       }
     end
 
