@@ -12,11 +12,21 @@ class BaseLevel
   private
 
   def rental_duration(start_date, end_date)
-    (Date.parse(end_date) - Date.parse(start_date)).to_i + 1
+    from_date = Date.parse(start_date)
+    to_date = Date.parse(end_date)
+
+    if from_date > to_date
+      raise "start_date should be before end_date (#{start_date} > #{end_date})"
+    end
+
+    (to_date - from_date).to_i + 1
   end
 
   def find_car(id)
-    @cars.find { |car| car["id"] == id }
+    car = @cars.find { |car| car["id"] == id }
+    raise "Car with id=#{id} not found" if car.nil?
+
+    car
   end
 
   def rental_options(rental)
@@ -93,6 +103,8 @@ class BaseLevel
           additional_insurance_amount = duration * 1000
           price += additional_insurance_amount
           commissions[:drivy_fee] += additional_insurance_amount
+        else
+          raise "Unknown option type #{option["type"]}"
         end
       end
     end
