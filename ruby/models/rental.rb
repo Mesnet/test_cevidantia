@@ -1,15 +1,17 @@
 require 'date'
 require_relative 'car'
+require_relative 'commission'
 
 class Rental
-  attr_reader :id, :car, :start_date, :end_date, :distance
+  attr_reader :id, :car, :start_date, :end_date, :distance, :with_duration_discount
 
-  def initialize(id:, car:, start_date:, end_date:, distance:)
+  def initialize(id:, car:, start_date:, end_date:, distance:, with_duration_discount: true)
     @id         = id
     @car        = car
     @start_date = Date.parse(start_date)
     @end_date   = Date.parse(end_date)
     @distance   = distance
+    @with_duration_discount = with_duration_discount
 
     # Validate date range
     raise "start_date should be before end_date" if @start_date > @end_date
@@ -22,8 +24,8 @@ class Rental
   end
 
   # Core price calculation (distance + time), possibly with discount
-  def price(with_discount: false)
-    time_amount = if with_discount
+  def price
+    time_amount = if with_duration_discount
       discounted_time_price
     else
       duration * car.price_per_day
@@ -33,8 +35,8 @@ class Rental
     (time_amount + distance_amount).to_i
   end
 
-  def price_with_discount
-    price(with_discount: true)
+  def commission
+    @commission ||= Commission.new(price, duration)
   end
 
   private

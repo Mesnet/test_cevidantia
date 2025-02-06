@@ -1,9 +1,10 @@
 require 'json'
 require_relative '../models/car'
 require_relative '../models/rental'
+require_relative '../models/commission'
 
 
-class Level2
+class Level3
 	attr_reader :data
 
   def initialize(input_data = nil)
@@ -11,11 +12,11 @@ class Level2
   end
 
   def run
-    # Compute prices
     results = rentals.map do |rental|
       {
         id: rental.id,
-        price: rental.price
+        price: rental.price,
+        commission: rental.commission.details,
       }
     end
 
