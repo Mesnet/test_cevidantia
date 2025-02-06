@@ -6,6 +6,7 @@ class BaseLevel
     data = JSON.parse(input_data)
     @cars    = data["cars"]    || []
     @rentals = data["rentals"] || []
+    @options = data["options"] || []
   end
 
   private
@@ -18,13 +19,17 @@ class BaseLevel
     @cars.find { |car| car["id"] == id }
   end
 
-  def compute_price_for(rental, options = {})
+  def rental_options(rental)
+    @options.select { |option| option["rental_id"] == rental["id"] }
+  end
+
+  def compute_price_for(rental, opts = {})
     car = find_car(rental["car_id"])
     duration = rental_duration(rental["start_date"], rental["end_date"])
 
     distance_amount = rental["distance"] * car["price_per_km"]
 
-    time_amount = if options[:with_discount]
+    time_amount = if opts[:with_discount]
 			amount_with_discount(duration, car["price_per_day"])
 		else
 			duration * car["price_per_day"]
@@ -69,5 +74,55 @@ class BaseLevel
       assistance_fee: assistance_fee,
       drivy_fee: drivy_fee
     }
+  end
+
+  def compute_actions(rental, opts = {})
+    price = compute_price_for(rental, { with_discount: true }).to_i
+    duration = rental_duration(rental["start_date"], rental["end_date"])
+    commissions = compute_commissions(price, duration)
+    # => { insurance_fee: 100, assistance_fee: 200, drivy_fee: 300 }
+
+    if opts[:with_options]
+      rental_options(rental).each do |option|
+        case option["type"]
+        when "gps"
+          price += duration * 500
+        when "baby_seat"
+          price += duration * 200
+        when "additional_insurance"
+          additional_insurance_amount = duration * 1000
+          price += additional_insurance_amount
+          commissions[:drivy_fee] += additional_insurance_amount
+        end
+      end
+    end
+
+    commission_total = commissions.values.sum
+    owner_amount = price - commission_total
+
+    actions = [
+      {
+        "who" => "driver",
+        "type" => "debit",
+        "amount" => price
+      },
+      {
+        "who" => "owner",
+        "type" => "credit",
+        "amount" => owner_amount
+      }
+    ]
+
+    commissions.each do |key, value|
+      who = key.to_s.gsub("_fee", "")
+
+      actions << {
+        "who" => who,
+        "type" => "credit",
+        "amount" => value
+      }
+    end
+
+    actions
   end
 end
