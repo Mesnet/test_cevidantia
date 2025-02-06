@@ -1,17 +1,10 @@
-require 'json'
-require_relative '../models/car'
-require_relative '../models/rental'
+require_relative '../lib/base_level'
 
-
-class Level1
-	attr_reader :data
-
-  def initialize(input_data = nil)
-		@data = input_data
-  end
+class Level1 < BaseLevel
 
   def run
     # Compute prices
+    rentals.each { |rental| rental.duration_discount_enabled = false }
     results = rentals.map do |rental|
       {
         id: rental.id,
@@ -22,23 +15,9 @@ class Level1
     return { rentals: results }.to_json
   end
 
-	private
+  private
 
-	def cars
-		return @cars if @cars
-
-		@cars = (data["cars"] || []).map do |c|
-      Car.new(
-        id: c["id"],
-        price_per_day: c["price_per_day"],
-        price_per_km:  c["price_per_km"]
-      )
-    end
-
-		cars
-	end
-
-	def rentals
+  def rentals
 		return @rentals if @rentals
 
 		@rentals = (data["rentals"] || []).map do |r|
@@ -47,13 +26,8 @@ class Level1
         car:        find_car(r["car_id"]),
         start_date: r["start_date"],
         end_date:   r["end_date"],
-        distance:   r["distance"],
-        with_duration_discount: false
+        distance:   r["distance"]
       )
     end
-	end
-
-	def find_car(car_id)
-		cars.find { |c| c.id == car_id }
 	end
 end
