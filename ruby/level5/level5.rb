@@ -3,9 +3,10 @@ require 'pry'
 require_relative '../models/car'
 require_relative '../models/rental'
 require_relative '../models/commission'
+require_relative '../models/option'
 
 
-class Level4
+class Level5
 	attr_reader :data
 
   def initialize(input_data = nil)
@@ -13,10 +14,11 @@ class Level4
   end
 
   def run
-    results = rentals.map do |rental|
+		results = rentals.map do |rental|
       {
         id: rental.id,
-        actions: rental.actions.map(&:to_h)
+        actions: rental.actions.map(&:to_h),
+				options: rental.options.map(&:type)
       }
     end
 
@@ -48,12 +50,29 @@ class Level4
         car:        find_car(r["car_id"]),
         start_date: r["start_date"],
         end_date:   r["end_date"],
-        distance:   r["distance"]
+        distance:   r["distance"],
+				options:    rental_options(r["id"])
       )
     end
 	end
 
+	def options
+		return @options if @options
+
+		@options = (data["options"] || []).map do |option|
+			Option.new(
+				id: option["id"],
+				rental_id: option["rental_id"],
+				type: option["type"]
+			)
+		end
+	end
+
 	def find_car(car_id)
 		cars.find { |c| c.id == car_id }
+	end
+
+	def rental_options(rental_id)
+		options.select { |o| o.rental_id == rental_id }
 	end
 end

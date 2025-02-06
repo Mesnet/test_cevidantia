@@ -4,14 +4,15 @@ require_relative 'commission'
 require_relative 'action'
 
 class Rental
-  attr_reader :id, :car, :start_date, :end_date, :distance, :with_duration_discount
+  attr_reader :id, :car, :start_date, :end_date, :distance, :options, :with_duration_discount
 
-  def initialize(id:, car:, start_date:, end_date:, distance:, with_duration_discount: true)
+  def initialize(id:, car:, start_date:, end_date:, distance:, options: [], with_duration_discount: true)
     @id         = id
     @car        = car
     @start_date = Date.parse(start_date)
     @end_date   = Date.parse(end_date)
     @distance   = distance
+    @options    = options
     @with_duration_discount = with_duration_discount
 
     # Validate date range
@@ -36,8 +37,16 @@ class Rental
     (time_amount + distance_amount).to_i
   end
 
+  def price_with_options
+    result = price
+    options.each do |option|
+      result += option.price_per_day * duration
+    end
+    result
+  end
+
   def commission
-    @commission ||= Commission.new(price, duration)
+    @commission ||= Commission.new(price, duration, options)
   end
 
   def commissions
@@ -48,10 +57,10 @@ class Rental
     return @actions if @actions
 
     commission_total = commissions.values.sum
-    owner_amount = price - commission_total
+    owner_amount = price_with_options - commission_total
 
     @actions = []
-    @actions << Action.new(who: "driver", type: "debit", amount: price)
+    @actions << Action.new(who: "driver", type: "debit", amount: price_with_options)
     @actions << Action.new(who: "owner", amount: owner_amount)
 
     commissions.each do |key, value|
