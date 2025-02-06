@@ -19,7 +19,7 @@ class Rental
     # Validate date range
     raise "start_date should be before end_date" if @start_date > @end_date
 		# Validate car presence
-		raise "car should be present" if @car.nil?
+		raise "car should be present" if !@car.is_a?(Car)
   end
 
   def duration

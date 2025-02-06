@@ -4,11 +4,11 @@ require_relative '../factories'   # load our custom factory methods
 
 RSpec.describe Level1 do
   # Use our factory methods
-  let(:car_1) { build_car(id: 1, price_per_day: 2000, price_per_km: 10) }
-  let(:car_2) { build_car(id: 2, price_per_day: 3000, price_per_km: 15) }
+  let(:car_1) { build_car_payload(id: 1, price_per_day: 2000, price_per_km: 10) }
+  let(:car_2) { build_car_payload(id: 2, price_per_day: 3000, price_per_km: 15) }
 
-  let(:rental_1) { build_rental(id: 1, car_id: 1, start_date: "2025-02-01", end_date: "2025-02-01", distance: 100) }
-  let(:rental_2) { build_rental(id: 2, car_id: 2, start_date: "2025-02-01", end_date: "2025-02-03", distance: 200) }
+  let(:rental_1) { build_rental_payload(id: 1, car_id: 1, start_date: "2025-02-01", end_date: "2025-02-01", distance: 100) }
+  let(:rental_2) { build_rental_payload(id: 2, car_id: 2, start_date: "2025-02-01", end_date: "2025-02-03", distance: 200) }
 
   let(:input_data) do
     {

@@ -4,10 +4,10 @@ require_relative '../../level5/level5'
 require_relative '../factories'
 
 RSpec.describe Level5 do
-  let(:car_1) {build_car( id: 1, price_per_day: 2000, price_per_km: 10)}
-  let(:rental_1) {build_rental( id: 1, car_id: 1, start_date: "2015-12-8", end_date: "2015-12-8", distance: 100)}
-  let(:rental_2) {build_rental( id: 2, car_id: 1, start_date: "2015-03-31", end_date: "2015-04-01", distance: 300)}
-  let(:rental_3) {build_rental( id: 3, car_id: 1, start_date: "2015-07-3", end_date: "2015-07-14", distance: 1000)}
+  let(:car_1) {build_car_payload( id: 1, price_per_day: 2000, price_per_km: 10)}
+  let(:rental_1) {build_rental_payload( id: 1, car_id: 1, start_date: "2015-12-8", end_date: "2015-12-8", distance: 100)}
+  let(:rental_2) {build_rental_payload( id: 2, car_id: 1, start_date: "2015-03-31", end_date: "2015-04-01", distance: 300)}
+  let(:rental_3) {build_rental_payload( id: 3, car_id: 1, start_date: "2015-07-3", end_date: "2015-07-14", distance: 1000)}
 
   let(:options) do
     [

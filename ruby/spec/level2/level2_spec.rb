@@ -1,16 +1,16 @@
 # spec/level2_spec.rb
 require 'json'
 require_relative '../../level2/level2'
-require_relative '../factories'  # Load our build_car / build_rental methods
+require_relative '../factories'  # Load our build_car_payload / build_rental_payload methods
 
 RSpec.describe Level2 do
   # Create the car(s) using the factory method
-  let(:car_1) { build_car( id: 1, price_per_day: 2000, price_per_km: 10) }
+  let(:car_1) { build_car_payload( id: 1, price_per_day: 2000, price_per_km: 10) }
 
   # Create each rental using the factory method
-  let(:rental_1) { build_rental( id: 1, car_id: 1, start_date: "2015-12-8", end_date: "2015-12-8", distance: 100) }
-  let(:rental_2) { build_rental( id: 2, car_id: 1, start_date: "2015-03-31", end_date: "2015-04-01", distance: 300) }
-  let(:rental_3) { build_rental( id: 3, car_id: 1, start_date: "2015-07-3", end_date: "2015-07-14", distance: 1000) }
+  let(:rental_1) { build_rental_payload( id: 1, car_id: 1, start_date: "2015-12-8", end_date: "2015-12-8", distance: 100) }
+  let(:rental_2) { build_rental_payload( id: 2, car_id: 1, start_date: "2015-03-31", end_date: "2015-04-01", distance: 300) }
+  let(:rental_3) { build_rental_payload( id: 3, car_id: 1, start_date: "2015-07-3", end_date: "2015-07-14", distance: 1000) }
 
   let(:input_data) do
     {

@@ -1,10 +1,14 @@
 class Option
+  TYPES = %w(gps baby_seat additional_insurance)
   attr_reader :id, :rental_id, :type
 
   def initialize(id:, rental_id:, type:)
     @id        = id
     @rental_id = rental_id
     @type      = type
+
+    # Validate types
+    raise "type should be one of #{TYPES.join(", ")}" unless TYPES.include?(type)
   end
 
   def price_per_day
