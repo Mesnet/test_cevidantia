@@ -80,11 +80,11 @@ RSpec.describe Rental do
     end
   end
 
-  describe "#price_with_options" do
+  describe "#price with_options" do
     context "no options" do
       it "equals #price if no options" do
         # from earlier example => 6600
-        expect(rental.price_with_options).to eq(rental.price)
+        expect(rental.price).to eq(rental.price(with_options: false))
       end
     end
 
@@ -95,7 +95,8 @@ RSpec.describe Rental do
       it "adds the per-day cost of the options" do
         rental.options << gps_option
         rental.options << baby_seat_option
-        expect(rental.price_with_options).to eq(8700)
+        expect(rental.price).to eq(8700)
+        expect(rental.price(with_options: false)).to eq(6600)
       end
     end
   end

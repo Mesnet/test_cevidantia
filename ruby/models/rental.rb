@@ -26,8 +26,8 @@ class Rental
     (end_date - start_date).to_i + 1
   end
 
-  # Core price calculation (distance + time), possibly with discount
-  def price
+  # Core price calculation (distance + time), possibly with discount, possibly with options
+  def price(with_options: true)
     time_amount = if duration_discount_enabled
       discounted_time_price
     else
@@ -35,19 +35,20 @@ class Rental
     end
 
     distance_amount = distance * car.price_per_km
-    (time_amount + distance_amount).to_i
-  end
+    result = (time_amount + distance_amount).to_i
 
-  def price_with_options
-    result = price
-    options.each do |option|
-      result += option.price_per_day * duration
+    if with_options
+      options.each do |option|
+        result += option.price_per_day * duration
+      end
     end
+
     result
   end
 
   def commission
-    @commission ||= Commission.new(price, duration, options)
+    price_without_options = price(with_options: false)
+    @commission ||= Commission.new(price_without_options, duration, options)
   end
 
   def commissions
@@ -58,10 +59,10 @@ class Rental
     return @actions if @actions
 
     commission_total = commissions.values.sum
-    owner_amount = price_with_options - commission_total
+    owner_amount = price - commission_total
 
     @actions = []
-    @actions << Action.new(who: "driver", type: "debit", amount: price_with_options)
+    @actions << Action.new(who: "driver", type: "debit", amount: price)
     @actions << Action.new(who: "owner", amount: owner_amount)
 
     commissions.each do |key, value|

@@ -15,19 +15,4 @@ class Level1 < BaseLevel
     return { rentals: results }.to_json
   end
 
-  private
-
-  def rentals
-		return @rentals if @rentals
-
-		@rentals = (data["rentals"] || []).map do |r|
-      Rental.new(
-        id:         r["id"],
-        car:        find_car(r["car_id"]),
-        start_date: r["start_date"],
-        end_date:   r["end_date"],
-        distance:   r["distance"]
-      )
-    end
-	end
 end
